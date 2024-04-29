@@ -1,0 +1,37 @@
+[global]
+  checkNewVersion = true
+  sendAnonymousUsage = true
+
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+
+[log]
+  level = "INFO"
+  format = "common"
+
+[accessLog]
+  filePath = "/var/log/access.log"
+  format = "json"
+
+  [accessLog.fields]
+    defaultMode = "keep"
+
+    [accessLog.fields.headers]
+      defaultMode = "drop"
+
+      [accessLog.fields.headers.names]
+        "Cf-connecting-ip" = "keep"
+        "X-Real-Ip" = "keep"
+  
+[api]
+  dashboard = true
+  insecure = true
+
+[providers.docker]
+  exposedByDefault = false
+
+[experimental.plugins]
+[experimental.plugins.realip]
+modulename = "github.com/BetterCorp/cloudflarewarp"
+version = "v1.3.0"
