@@ -4,20 +4,20 @@ networks:
   traefik:
 
 services:
-  nginx:    
-    image: nginx
-    environment:
-      - NGINX_HOST=staging.jiechen.dev
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=traefik"
-      - "traefik.http.routers.nginx.entrypoints=web"
-      - "traefik.http.routers.nginx.rule=Host(`staging.jiechen.dev`)"
-      - "traefik.http.routers.nginx.priority=1"
-      - "traefik.http.routers.nginx.service=nginx"
-      - "traefik.http.services.nginx.loadbalancer.server.port=80"
-    networks:
-      - traefik
+  # nginx:    
+  #   image: nginx
+  #   environment:
+  #     - NGINX_HOST=staging.jiechen.dev
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.docker.network=traefik"
+  #     - "traefik.http.routers.nginx.entrypoints=web"
+  #     - "traefik.http.routers.nginx.rule=Host(`staging.jiechen.dev`)"
+  #     - "traefik.http.routers.nginx.priority=1"
+  #     - "traefik.http.routers.nginx.service=nginx"
+  #     - "traefik.http.services.nginx.loadbalancer.server.port=80"
+  #   networks:
+  #     - traefik
 
   traefik:
     image: "traefik:v2.11"  
@@ -26,8 +26,6 @@ services:
       - "traefik.http.routers.api.entrypoints=web"
       - "traefik.http.routers.api.rule=Host(`traefik.docker.localhost`)"
       - "traefik.http.routers.api.service=api@internal"
-      - traefik.http.middlewares.private-api-allowlist.ipallowlist.sourcerange=0.0.0.0
-      - traefik.http.middlewares.private-api-allowlist.ipallowlist.depth=1
     command:
       - --providers.docker
       - --entryPoints.web.address=:80
@@ -47,7 +45,9 @@ services:
     image: traefik/whoami
     labels:
       - traefik.enable=true
-      - traefik.http.routers.whoami.rule=PathPrefix(`/whoami`)
+      - traefik.http.routers.whoami.rule=Host(`staging.jiechen.dev`) && PathPrefix(`/whoami`)
+      - traefik.http.middlewares.private-api-allowlist.ipallowlist.sourcerange=0.0.0.0
+      - traefik.http.middlewares.private-api-allowlist.ipallowlist.ipstrategy.depth=1
       - traefik.http.routers.whoami.middlewares=private-api-allowlist
     networks:
       - traefik
